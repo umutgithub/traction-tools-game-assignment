@@ -17,8 +17,8 @@ export const tictactoeSlice = createSlice({
     setHistory: (state, action) => {
       state.history = action.payload;
     },
-    setCurrentStepNumber: (state, action) => {
-      state.currentStepNumber = action.payload;
+    setCurrentStepNumber: (state) => {
+      state.currentStepNumber += 1;
     },
     setxIsNext: (state, action) => {
       state.xIsNext = action.payload;

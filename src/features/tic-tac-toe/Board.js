@@ -8,10 +8,6 @@ import {
 import Square from './Square';
 
 export function Board(props){
-  // const history = useSelector(getHistory);
-  // const currentStepNumber = useSelector(getCurrentStepNumber);
-  // const current = history[currentStepNumber];
-
   function renderSquare(i) {
     const winnerClass =
       props.winnerSquares &&
@@ -49,7 +45,7 @@ export function Board(props){
     return board;
   }
 
-  return <div>{createBoard(4, 4)}</div>;
+  return <div>{createBoard(3, 3)}</div>;
 
 } 
 

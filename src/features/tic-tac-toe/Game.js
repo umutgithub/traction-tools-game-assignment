@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
+import { getRandomInt, getEmptySquares } from './utils';
 import {
   getHistory,
   getCurrentStepNumber,
@@ -16,34 +17,34 @@ import Board from './Board';
  * @param {*} squares 
  */
 const calculateWinner = (squares) => {
-  // const threeDimensionWinningLines = [
-  //   [0, 1, 2],
-  //   [3, 4, 5],
-  //   [6, 7, 8],
-  //   [0, 3, 6],
-  //   [1, 4, 7],
-  //   [2, 5, 8],
-  //   [0, 4, 8],
-  //   [2, 4, 6],
-  // ];
-
-  const fourDimensionWinningLines = [
-    [0, 1, 2, 3],
-    [4, 5, 6, 7],
-    [8, 9, 10, 11],
-    [12, 13, 14, 15],
-    [0, 4, 8, 12],
-    [1, 5, 9, 13],
-    [2, 6, 10, 14],
-    [3, 7, 11, 15],
-    [0, 5, 10, 15],
-    [3, 6, 9, 12]
+  const threeDimensionWinningLines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
   ];
 
-  for (let i = 0; i < fourDimensionWinningLines.length; i += 1) {
-    const [a, b, c, d] = fourDimensionWinningLines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c] && squares[a] === squares[d]) {
-      return { winner: squares[a], winnerRow: fourDimensionWinningLines[i] };
+  // const fourDimensionWinningLines = [
+  //   [0, 1, 2, 3],
+  //   [4, 5, 6, 7],
+  //   [8, 9, 10, 11],
+  //   [12, 13, 14, 15],
+  //   [0, 4, 8, 12],
+  //   [1, 5, 9, 13],
+  //   [2, 6, 10, 14],
+  //   [3, 7, 11, 15],
+  //   [0, 5, 10, 15],
+  //   [3, 6, 9, 12]
+  // ];
+
+  for (let i = 0; i < threeDimensionWinningLines.length; i += 1) {
+    const [a, b, c, d] = threeDimensionWinningLines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return { winner: squares[a], winnerRow: threeDimensionWinningLines[i] };
     }
   }
 
@@ -78,6 +79,12 @@ const getLocation = (move) => {
 };
 
 export default function GameTicTacToe(){
+  //move state
+  const [nextMove, setNextMove] = useState(1);
+
+  //player state
+  const [players, setPlayers] = useState({ human: 1, computer: 2 });
+
   // current states
   const history = useSelector(getHistory);
   const currentStepNumber = useSelector(getCurrentStepNumber);
@@ -87,37 +94,109 @@ export default function GameTicTacToe(){
   const dispatch = useDispatch();
 
   /**
-   * Square Click Handler
-   * @param {*} i (index) 
+   * Human Move Click Handler
+   * @param {*} index (index) 
    */
-  function handleClick(i) {
-    // ensure to work with copy of history object, before mutating the state.
-    const historyDeepCopy = [...history].slice(0, currentStepNumber + 1);
-    const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
-    const squares = newCurrent.squares.slice();
+  function humanMove(index) {
+    move(index);
+    setNextMove(players.computer);
+  }
+  
+  /**
+   * Computer Move useEffect Handler
+   * @param {*} index 
+   */
+  function computerMove(){
+    const mostRecentGrid = history[history.length - 1].squares;
+    console.info('mostRecentGrid', mostRecentGrid);
+    const emptyIndices = getEmptySquares(mostRecentGrid);
+    console.info('emptyIndices', emptyIndices);
 
-    if (calculateWinner(squares).winner || squares[i]) {
-      return;
+    let index;
+    switch (true) { // switch (mode) {
+      case true:
+        do {
+          index = getRandomInt(0, 8);
+        } while (!emptyIndices.includes(index));
+        break;
     }
 
-    squares[i] = xIsNext ? 'X' : 'O';
+    move(index);
+    setNextMove(players.human);
+  }
 
-    const finalHistory = historyDeepCopy.concat([
-      {
-        squares,
-        currentLocation: getLocation(i),
-        stepNumber: historyDeepCopy.length,
-      },
-    ]);
+  function move(index){
+    if (nextMove === players.human) {
+      // ensure to work with copy of history object, before mutating the state.
+      const historyDeepCopy = history.slice(0, currentStepNumber + 1);
+      const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
+      const squares = newCurrent.squares.slice();
 
-    dispatch(setCurrentStepNumber(finalHistory.length - 1));
-    dispatch(setxIsNext(!xIsNext));
-    dispatch(setHistory(finalHistory));
+      if (calculateWinner(squares).winner || squares[index]) {
+        return;
+      }
+
+      squares[index] = 'X';
+
+      const finalHistory = historyDeepCopy.concat([
+        {
+          squares,
+          currentLocation: getLocation(index),
+          stepNumber: historyDeepCopy.length,
+        },
+      ]);
+
+   
+      dispatch(setCurrentStepNumber());
+      dispatch(setxIsNext(!xIsNext));
+      dispatch(setHistory(finalHistory));   
+    }
+    else if (nextMove === players.computer) {
+      const historyDeepCopy = [...history].slice(0, currentStepNumber + 1);
+      const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
+      const squares = newCurrent.squares.slice();
+
+      if (calculateWinner(squares).winner || squares[index]) {
+        return;
+      }
+
+      squares[index] = 'O';
+
+      const finalHistory = historyDeepCopy.concat([
+        {
+          squares,
+          currentLocation: getLocation(index),
+          stepNumber: historyDeepCopy.length,
+        },
+      ]);
+      
+      dispatch(setCurrentStepNumber());
+      dispatch(setxIsNext(!xIsNext));
+      dispatch(setHistory(finalHistory));   
+    }
 
   }
 
+  /**
+   * Make computer move when it's computer's turn
+   */
+  useEffect(() => {
+    let timeout;
+    if (
+      nextMove !== null &&
+      nextMove === players.computer
+      // gameState !== GAME_STATES.over
+    ) {
+      // Delay computer moves to make them more natural
+      timeout = setTimeout(() => {
+        computerMove();
+      }, 200);
+    }
+    return () => timeout && clearTimeout(timeout);
+  }, [nextMove]);
 
-  const current = history[currentStepNumber];
+
+  const current = history[history.length - 1];
   const { winnerRow } = calculateWinner(current.squares);
 
   return (
@@ -126,7 +205,7 @@ export default function GameTicTacToe(){
           <Board
             squares={current.squares}
             winnerSquares={winnerRow}
-            onClick={i => handleClick(i)}
+            onClick={i => humanMove(i)}
           />
         </div>
       </div>
