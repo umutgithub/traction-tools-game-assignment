@@ -1,3 +1,5 @@
+export const DIMS = 3;
+
 export const getRandomInt = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -11,4 +13,8 @@ export const getRandomInt = (min, max) => {
       if (square === null) squares.push(i);
     });
     return squares;
+  };
+
+export const isEmpty = (grid) => {
+    return getEmptySquares(grid).length === DIMS ** 2;
   };

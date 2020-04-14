@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { getRandomInt, getEmptySquares } from './utils';
+import { getRandomInt, getEmptySquares, isEmpty } from './utils';
+import { GAME_MODES } from "./constants";
+
 import {
   getHistory,
   getCurrentStepNumber,
@@ -42,7 +44,7 @@ const calculateWinner = (squares) => {
   // ];
 
   for (let i = 0; i < threeDimensionWinningLines.length; i += 1) {
-    const [a, b, c, d] = threeDimensionWinningLines[i];
+    const [a, b, c] = threeDimensionWinningLines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return { winner: squares[a], winnerRow: threeDimensionWinningLines[i] };
     }
@@ -85,6 +87,9 @@ export default function GameTicTacToe(){
   //player state
   const [players, setPlayers] = useState({ human: 1, computer: 2 });
 
+  //difficulty select state
+  const [difficulty, setDifficulty] = useState('Easy');
+
   // current states
   const history = useSelector(getHistory);
   const currentStepNumber = useSelector(getCurrentStepNumber);
@@ -113,8 +118,8 @@ export default function GameTicTacToe(){
     console.info('emptyIndices', emptyIndices);
 
     let index;
-    switch (true) { // switch (mode) {
-      case true:
+    switch (difficulty) { // switch (mode) {
+      case GAME_MODES.easy:
         do {
           index = getRandomInt(0, 8);
         } while (!emptyIndices.includes(index));
@@ -198,10 +203,23 @@ export default function GameTicTacToe(){
 
   const current = history[history.length - 1];
   const { winnerRow } = calculateWinner(current.squares);
+  const handleDifficultyChange = (difficulty) => {
+    setDifficulty(difficulty);
+  };
 
   return (
       <div className="game">
         <div className="game-board">
+          <div>
+              <select name="difficulty" value={difficulty} onChange={event => handleDifficultyChange(event.target.value)}>
+                <option id="0">Easy</option>
+                <option id="1">Medium</option>
+                <option id="1">Hard</option>
+              </select>
+          </div>
+
+          <br></br> 
+          
           <Board
             squares={current.squares}
             winnerSquares={winnerRow}
