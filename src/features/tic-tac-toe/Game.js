@@ -24,22 +24,21 @@ import Board from "./Board";
  */
 const getLocation = (move) => {
   const locationMap = {
-    0: 'row: 1, col: 1',
-    1: 'row: 1, col: 2',
-    2: 'row: 1, col: 3',
-    3: 'row: 2, col: 1',
-    4: 'row: 2, col: 2',
-    5: 'row: 2, col: 3',
-    6: 'row: 3, col: 1',
-    7: 'row: 3, col: 2',
-    8: 'row: 3, col: 3',
+    0: "row: 1, col: 1",
+    1: "row: 1, col: 2",
+    2: "row: 1, col: 3",
+    3: "row: 2, col: 1",
+    4: "row: 2, col: 2",
+    5: "row: 2, col: 3",
+    6: "row: 3, col: 1",
+    7: "row: 3, col: 2",
+    8: "row: 3, col: 3",
   };
 
   return locationMap[move];
 };
 
 export default function GameTicTacToe() {
-
   // TicTacToe Game final App History and scores states (stored in redux)
   const history = useSelector(getHistory);
   const currentStepNumber = useSelector(getCurrentStepNumber);
@@ -59,7 +58,7 @@ export default function GameTicTacToe() {
 
   //grid state
   const [grid, setGrid] = useState(history[history.length - 1].squares);
-  
+
   //create a instance of Board Helpers. This will be used to control overall game.
   const board = new BoardHelpers(grid.concat());
 
@@ -72,7 +71,7 @@ export default function GameTicTacToe() {
    */
   function humanMove(index) {
     //Do not human to make another move if the game is over.
-    if(board.getWinner()){
+    if (board.getWinner()) {
       return;
     }
 
@@ -134,10 +133,10 @@ export default function GameTicTacToe() {
    */
   function move(index, player) {
     // if the game is over don't make another move.
-    if(board.getWinner()){
+    if (board.getWinner()) {
       return;
     }
-    
+
     //update grid on every move.
     if (player) {
       setGrid((grid) => {
@@ -152,7 +151,7 @@ export default function GameTicTacToe() {
     const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
     const squares = newCurrent.squares.slice();
 
-    squares[index] = nextMove === players.human ? "X" : 'O';
+    squares[index] = nextMove === players.human ? "X" : "O";
 
     const finalHistory = historyDeepCopy.concat([
       {
@@ -164,7 +163,6 @@ export default function GameTicTacToe() {
 
     dispatch(setCurrentStepNumber());
     dispatch(setHistory(finalHistory));
-    
   }
 
   function reset() {
@@ -177,7 +175,7 @@ export default function GameTicTacToe() {
    */
   useEffect(() => {
     //if there is winner or draw, stop the game.
-    if(board.getWinner() !== null){
+    if (board.getWinner() !== null) {
       setNextMove(players.human);
       return;
     }
@@ -196,7 +194,7 @@ export default function GameTicTacToe() {
    * Use effect to dispatch user score.
    */
   useEffect(() => {
-    if(board.getWinner() && board.getWinner().res){
+    if (board.getWinner() && board.getWinner().res) {
       dispatch(setWinnerScore(board.getWinner().winner));
       return;
     }
@@ -214,7 +212,7 @@ export default function GameTicTacToe() {
   let winner = null;
   let winnerRow = null;
 
-  if(board.getWinner() && board.getWinner().winner){
+  if (board.getWinner() && board.getWinner().winner) {
     winner = board.getWinner().winner;
     winnerRow = board.getWinner().winnerRow;
   }
