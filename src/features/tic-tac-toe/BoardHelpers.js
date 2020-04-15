@@ -1,6 +1,6 @@
 import { DIMS, DRAW, PLAYER_MAP } from "./constants";
 
-export default class Board {
+export default class BoardHelpers {
   constructor(grid) {
     this.grid = grid || new Array(DIMS ** 2).fill(null);
   }
@@ -50,6 +50,6 @@ export default class Board {
   };
 
   clone = () => {
-    return new Board(this.grid.concat());
+    return new BoardHelpers(this.grid.concat());
   };
 }
