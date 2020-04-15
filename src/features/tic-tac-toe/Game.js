@@ -198,7 +198,7 @@ export default function GameTicTacToe() {
   }
 
   if (winner) {
-    status = `Winner ${winner}`;
+    status = `Winner: ${winner}`;
   } else if (history.length === 10) {
     status = "Draw. No one won.";
   }
