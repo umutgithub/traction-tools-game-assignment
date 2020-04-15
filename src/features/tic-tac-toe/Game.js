@@ -18,26 +18,6 @@ import {
 
 import Board from "./Board";
 
-/**
- * Location Map
- * @param {*} move
- */
-const getLocation = (move) => {
-  const locationMap = {
-    0: "row: 1, col: 1",
-    1: "row: 1, col: 2",
-    2: "row: 1, col: 3",
-    3: "row: 2, col: 1",
-    4: "row: 2, col: 2",
-    5: "row: 2, col: 3",
-    6: "row: 3, col: 1",
-    7: "row: 3, col: 2",
-    8: "row: 3, col: 3",
-  };
-
-  return locationMap[move];
-};
-
 export default function GameTicTacToe() {
   // TicTacToe Game final App History and scores states (stored in redux)
   const history = useSelector(getHistory);
@@ -156,7 +136,7 @@ export default function GameTicTacToe() {
     const finalHistory = historyDeepCopy.concat([
       {
         squares,
-        currentLocation: getLocation(index),
+        currentLocation: board.getLocation(index),
         stepNumber: historyDeepCopy.length,
       },
     ]);
@@ -218,7 +198,7 @@ export default function GameTicTacToe() {
   }
 
   if (winner) {
-    status = `Winner ${winner}`;
+    status = `Winner: ${winner}`;
   } else if (history.length === 10) {
     status = "Draw. No one won.";
   }
