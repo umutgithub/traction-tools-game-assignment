@@ -17,11 +17,20 @@ export const tictactoeSlice = createSlice({
     },
     setCurrentStepNumber: (state) => {
       state.currentStepNumber += 1;
-    }
-  },
+    },
+    resetInitialState: (state) => {
+      state.history = [
+        {
+          squares: Array(9).fill(null)
+        }
+      ];
+
+      state.currentStepNumber = 0;
+    },
+  }
 });
 
-export const {setHistory, setCurrentStepNumber } = tictactoeSlice.actions;
+export const {setHistory, setCurrentStepNumber, resetInitialState } = tictactoeSlice.actions;
 
 // THUNKS
 

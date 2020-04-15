@@ -87,11 +87,16 @@ ul {
 
 .game {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .game-info {
   margin-left: 20px;
+}
+
+.game-board {
+  display: flex;
+  flex-direction: row;
 }
 
 .button {
