@@ -16,46 +16,7 @@ import {
 import Board from "./Board";
 
 /**
- * Helper function to create styles.
- * @param {*} squares
- */
-const calculateWinner = (squares) => {
-  const threeDimensionWinningLines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  // const fourDimensionWinningLines = [
-  //   [0, 1, 2, 3],
-  //   [4, 5, 6, 7],
-  //   [8, 9, 10, 11],
-  //   [12, 13, 14, 15],
-  //   [0, 4, 8, 12],
-  //   [1, 5, 9, 13],
-  //   [2, 6, 10, 14],
-  //   [3, 7, 11, 15],
-  //   [0, 5, 10, 15],
-  //   [3, 6, 9, 12]
-  // ];
-
-  for (let i = 0; i < threeDimensionWinningLines.length; i += 1) {
-    const [a, b, c] = threeDimensionWinningLines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return { winner: squares[a], winnerRow: threeDimensionWinningLines[i] };
-    }
-  }
-
-  return { winner: null, winnerRow: null };
-};
-
-/**
- *
+ * Location Map
  * @param {*} move
  */
 const getLocation = (move) => {
@@ -75,6 +36,7 @@ const getLocation = (move) => {
 };
 
 export default function GameTicTacToe() {
+
   // TicTacToe Game current app states (stored in redux)
   const history = useSelector(getHistory);
   const currentStepNumber = useSelector(getCurrentStepNumber);
@@ -91,6 +53,9 @@ export default function GameTicTacToe() {
 
   //grid state
   const [grid, setGrid] = useState(history[history.length - 1].squares);
+  
+  //create a instance of Board.
+  const board = new BoardHelpers(grid.concat());
 
   //dispatcher
   const dispatch = useDispatch();
@@ -157,6 +122,11 @@ export default function GameTicTacToe() {
    * @param {*} player
    */
   function move(index, player) {
+    // if the game is over don't make another move.
+    if(board.getWinner() !== null){
+      return;
+    }
+
     if (player) {
       setGrid((grid) => {
         const gridCopy = grid.concat();
@@ -164,16 +134,12 @@ export default function GameTicTacToe() {
         return gridCopy;
       });
     }
-
+    
     if (nextMove === players.human) {
       // ensure to work with copy of history object, before mutating the state.
       const historyDeepCopy = history.slice(0, currentStepNumber + 1);
       const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
       const squares = newCurrent.squares.slice();
-
-      if (calculateWinner(squares).winner || squares[index]) {
-        return;
-      }
 
       squares[index] = "X";
 
@@ -187,14 +153,11 @@ export default function GameTicTacToe() {
 
       dispatch(setCurrentStepNumber());
       dispatch(setHistory(finalHistory));
+      
     } else if (nextMove === players.computer) {
       const historyDeepCopy = [...history].slice(0, currentStepNumber + 1);
       const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
       const squares = newCurrent.squares.slice();
-
-      if (calculateWinner(squares).winner || squares[index]) {
-        return;
-      }
 
       squares[index] = "O";
 
@@ -220,6 +183,11 @@ export default function GameTicTacToe() {
    * Hook for computer's turn.
    */
   useEffect(() => {
+    //if there is winner or draw, stop the game.
+    if(board.getWinner() !== null){
+      setNextMove(players.human);
+      return;
+    }
     let timeout;
     if (nextMove !== null && nextMove === players.computer) {
       // Delay computer moves to make them more natural
@@ -232,12 +200,19 @@ export default function GameTicTacToe() {
   }, [nextMove]);
 
   const current = history[history.length - 1];
-  const { winner, winnerRow } = calculateWinner(current.squares);
   const handleDifficultyChange = (difficulty) => {
     setDifficulty(difficulty);
   };
 
   let status;
+  let winner = null;
+  let winnerRow = null;
+
+  if(board.getWinner()){
+    winner = board.getWinner().winner;
+    winnerRow = board.getWinner().winnerRow;
+  }
+
   if (winner) {
     status = `Winner ${winner}`;
   } else if (history.length === 10) {

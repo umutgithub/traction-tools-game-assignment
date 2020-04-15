@@ -9,8 +9,8 @@ export const minimax = (board, player) => {
   let maxScore = -1;
   let bestMove = null;
 
-  if (board.getWinner() !== null) {
-    return [SCORES[board.getWinner()], 0];
+  if (board.getWinner() !== null ) {
+    return [SCORES[board.getWinner().res], 0];
   } else {
     for (let empty of board.getEmptySquares()) {
       let copy = board.clone();

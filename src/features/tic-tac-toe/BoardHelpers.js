@@ -41,9 +41,9 @@ export default class Board {
         grid[el[0]] === grid[el[1]] &&
         grid[el[0]] === grid[el[2]]
       ) {
-        res = grid[el[0]];
+        res = { res: grid[el[0]], winner: grid[el[0]], winnerRow: winningCombos[i] }
       } else if (res === null && this.getEmptySquares(grid).length === 0) {
-        res = DRAW;
+        res = { res: DRAW, winner: null, winnerRow: null };
       }
     });
     return res;
