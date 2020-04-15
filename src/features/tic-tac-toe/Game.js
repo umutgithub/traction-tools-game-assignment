@@ -10,6 +10,9 @@ import {
   getCurrentStepNumber,
   setHistory,
   setCurrentStepNumber,
+  setWinnerScore,
+  getPlayerScore_X,
+  getPlayerScore_O,
   resetInitialState,
 } from "./tictactoeSlice";
 
@@ -37,10 +40,13 @@ const getLocation = (move) => {
 
 export default function GameTicTacToe() {
 
-  // TicTacToe Game current app states (stored in redux)
+  // TicTacToe Game final App History and scores states (stored in redux)
   const history = useSelector(getHistory);
   const currentStepNumber = useSelector(getCurrentStepNumber);
+  const playerScore_X = useSelector(getPlayerScore_X);
+  const playerScore_O = useSelector(getPlayerScore_O);
 
+  // ======= Rest of the app internal state uses hooks. =======
   //move state
   const [nextMove, setNextMove] = useState(1);
 
@@ -54,7 +60,7 @@ export default function GameTicTacToe() {
   //grid state
   const [grid, setGrid] = useState(history[history.length - 1].squares);
   
-  //create a instance of Board.
+  //create a instance of Board Helpers. This will be used to control overall game.
   const board = new BoardHelpers(grid.concat());
 
   //dispatcher
@@ -65,6 +71,11 @@ export default function GameTicTacToe() {
    * @param {*} index (index)
    */
   function humanMove(index) {
+    //Do not human to make another move if the game is over.
+    if(board.getWinner()){
+      return;
+    }
+
     if (!grid[index]) {
       move(index, players.human);
       setNextMove(players.computer);
@@ -123,7 +134,7 @@ export default function GameTicTacToe() {
    */
   function move(index, player) {
     // if the game is over don't make another move.
-    if(board.getWinner() !== null){
+    if(board.getWinner()){
       return;
     }
     
@@ -181,16 +192,29 @@ export default function GameTicTacToe() {
     // eslint-disable-next-line
   }, [nextMove]);
 
+  /**
+   * Use effect to dispatch user score.
+   */
+  useEffect(() => {
+    if(board.getWinner() && board.getWinner().res){
+      dispatch(setWinnerScore(board.getWinner().winner));
+      return;
+    }
+    // eslint-disable-next-line
+  }, [board.getWinner() && board.getWinner().winner]);
+
   const current = history[history.length - 1];
   const handleDifficultyChange = (difficulty) => {
     setDifficulty(difficulty);
+    // reset game if difficulty changes.
+    reset();
   };
 
   let status;
   let winner = null;
   let winnerRow = null;
 
-  if(board.getWinner()){
+  if(board.getWinner() && board.getWinner().winner){
     winner = board.getWinner().winner;
     winnerRow = board.getWinner().winnerRow;
   }
@@ -227,12 +251,15 @@ export default function GameTicTacToe() {
           <button className="button button--new-game" onClick={() => reset()}>
             New game
           </button>
-
           <br></br>
-
           <div>{status}</div>
         </div>
       </div>
+
+      <br></br>
+
+      <div> PLAYER X: {playerScore_X} </div>
+      <div> PLAYER O: {playerScore_O} </div>
     </div>
   );
 }

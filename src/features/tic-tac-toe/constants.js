@@ -25,5 +25,3 @@ export const GAME_MODES = {
   medium: "Medium",
   hard: "Hard"
 };
-
-  
