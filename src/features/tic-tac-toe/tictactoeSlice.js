@@ -8,9 +8,7 @@ export const tictactoeSlice = createSlice({
         squares: Array(9).fill(null)
       }
     ],
-    currentStepNumber: 0,
-    xIsNext: true,
-    boardSize: 5
+    currentStepNumber: 0
   },
   reducers: {
     //REDUCERS
@@ -19,29 +17,18 @@ export const tictactoeSlice = createSlice({
     },
     setCurrentStepNumber: (state) => {
       state.currentStepNumber += 1;
-    },
-    setxIsNext: (state, action) => {
-      state.xIsNext = action.payload;
-    },
-    setBoardSize: (state, action) => {
-      state.boardSize = action.payload;
-    },
+    }
   },
 });
 
-export const {setHistory, setCurrentStepNumber, setxIsNext } = tictactoeSlice.actions;
+export const {setHistory, setCurrentStepNumber } = tictactoeSlice.actions;
 
 // THUNKS
-export const incrementAsync = value => dispatch => {
-  setTimeout(() => {
-    dispatch(setxIsNext(value));
-  }, 1000);
-};
+
 
 // SELECTORS
 export const getHistory = state => state.tictactoe.history;
 export const getCurrentStepNumber = state => state.tictactoe.currentStepNumber;
-export const getxIsNext = state => state.tictactoe.xIsNext;
-export const getBoardSize = state => state.tictactoe.boardSize;
+;
 
 export default tictactoeSlice.reducer;

@@ -1,10 +1,4 @@
-import React from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
-import {
-  // getBoardSize,
-  // getHistory,
-  // getCurrentStepNumber,
-} from './tictactoeSlice';
+import React from "react";
 import Square from './Square';
 
 export function Board(props){
