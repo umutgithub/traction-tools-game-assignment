@@ -1,4 +1,4 @@
-import { DIMS, DRAW } from "./constants";
+import { DIMS, DRAW, PLAYER_MAP } from "./constants";
 
 export default class Board {
   constructor(grid) {
@@ -41,7 +41,7 @@ export default class Board {
         grid[el[0]] === grid[el[1]] &&
         grid[el[0]] === grid[el[2]]
       ) {
-        res = { res: grid[el[0]], winner: grid[el[0]], winnerRow: winningCombos[i] }
+        res = { res: grid[el[0]], winner: PLAYER_MAP[grid[el[0]]], winnerRow: winningCombos[i] }
       } else if (res === null && this.getEmptySquares(grid).length === 0) {
         res = { res: DRAW, winner: null, winnerRow: null };
       }

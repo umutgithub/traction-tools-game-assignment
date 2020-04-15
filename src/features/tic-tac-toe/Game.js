@@ -126,7 +126,8 @@ export default function GameTicTacToe() {
     if(board.getWinner() !== null){
       return;
     }
-
+    
+    //update grid on every move.
     if (player) {
       setGrid((grid) => {
         const gridCopy = grid.concat();
@@ -134,47 +135,28 @@ export default function GameTicTacToe() {
         return gridCopy;
       });
     }
+
+    // ensure to work with copy of history object, before mutating the state.
+    const historyDeepCopy = history.slice(0, currentStepNumber + 1);
+    const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
+    const squares = newCurrent.squares.slice();
+
+    squares[index] = nextMove === players.human ? "X" : 'O';
+
+    const finalHistory = historyDeepCopy.concat([
+      {
+        squares,
+        currentLocation: getLocation(index),
+        stepNumber: historyDeepCopy.length,
+      },
+    ]);
+
+    dispatch(setCurrentStepNumber());
+    dispatch(setHistory(finalHistory));
     
-    if (nextMove === players.human) {
-      // ensure to work with copy of history object, before mutating the state.
-      const historyDeepCopy = history.slice(0, currentStepNumber + 1);
-      const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
-      const squares = newCurrent.squares.slice();
-
-      squares[index] = "X";
-
-      const finalHistory = historyDeepCopy.concat([
-        {
-          squares,
-          currentLocation: getLocation(index),
-          stepNumber: historyDeepCopy.length,
-        },
-      ]);
-
-      dispatch(setCurrentStepNumber());
-      dispatch(setHistory(finalHistory));
-      
-    } else if (nextMove === players.computer) {
-      const historyDeepCopy = [...history].slice(0, currentStepNumber + 1);
-      const newCurrent = historyDeepCopy[historyDeepCopy.length - 1];
-      const squares = newCurrent.squares.slice();
-
-      squares[index] = "O";
-
-      const finalHistory = historyDeepCopy.concat([
-        {
-          squares,
-          currentLocation: getLocation(index),
-          stepNumber: historyDeepCopy.length,
-        },
-      ]);
-
-      dispatch(setCurrentStepNumber());
-      dispatch(setHistory(finalHistory));
-    }
   }
 
-  function reset(winner) {
+  function reset() {
     setGrid([...Array(9).fill(null)]);
     dispatch(resetInitialState());
   }
@@ -242,7 +224,7 @@ export default function GameTicTacToe() {
           onClick={(i) => humanMove(i)}
         />
         <div className="game-info">
-          <button className="button button--new-game" onClick={() => reset(winner)}>
+          <button className="button button--new-game" onClick={() => reset()}>
             New game
           </button>
 
