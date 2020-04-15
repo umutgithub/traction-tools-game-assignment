@@ -1,14 +1,12 @@
-import React from 'react';
-import  GameTicTacToe from './features/tic-tac-toe/Game';
+import React from "react";
+import GameTicTacToe from "./features/tic-tac-toe/Game";
 
-import './App.css';
+import "./App.css";
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-
-          <GameTicTacToe/>
-        
+        <GameTicTacToe />
       </header>
     </div>
   );

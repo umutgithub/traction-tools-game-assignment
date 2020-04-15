@@ -1,7 +1,7 @@
 import { SCORES } from "./constants";
 import { switchPlayer } from "./utils";
 
-// Recursive Minimax algorithm, can only work for 3x3. 
+// Recursive Minimax algorithm, can only work for 3x3.
 // (needs more optimization for bigger boards.)
 export const minimax = (board, player) => {
   const mult = SCORES[String(player)];
@@ -9,7 +9,7 @@ export const minimax = (board, player) => {
   let maxScore = -1;
   let bestMove = null;
 
-  if (board.getWinner() !== null ) {
+  if (board.getWinner() !== null) {
     return [SCORES[board.getWinner().res], 0];
   } else {
     for (let empty of board.getEmptySquares()) {
